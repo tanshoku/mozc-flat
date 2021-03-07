@@ -52,7 +52,7 @@ __clean() {
 
 case $1 in
   install) __install ;;
-  remove|uninsintall) __uninstall ;;
+  remove|uninstall) __uninstall ;;
   clean) __clean ;;
   ?) exit 1 ;;
 esac
