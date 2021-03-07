@@ -1,0 +1,61 @@
+#!/bin/bash
+
+
+__install() {
+  if ! [[ -a backup ]] ; then
+    mkdir backup
+  fi
+  cp --no-clobber /usr/share/icons/mozc/*.png backup
+
+  mkdir build
+
+  cp icon-hiragana.png build/product_icon_32bpp-128.png
+
+  convert -scale 32 icon-hiragana.png build/ime_product_icon_opensource-32.png 
+  convert -scale 32 icon-hiragana.png build/ui-hiragana.png 
+  convert -scale 32 icon-katakana.png build/ui-katakana_full.png 
+  convert -scale 32 icon-katakana-half.png build/ui-katakana_half.png 
+  convert -scale 32 icon-alpha.png build/ui-direct.png 
+  convert -scale 32 icon-alpha-full.png build/ui-alpha_full.png 
+  convert -scale 32 icon-alpha-half.png build/ui-alpha_half.png 
+  convert -scale 32 icon-dictionary.png build/ui-dictionary.png 
+  convert -scale 32 icon-config.png build/ui-properties.png 
+  convert -scale 32 icon-tool.png build/ui-tool.png 
+
+  sudo -v
+  for file in build/*.png ; do
+    sudo cp -v ${file} /usr/share/icons/mozc/
+  done
+
+  __fcitx5_restart
+}
+
+__uninstall() {
+  sudo -v
+  for file in backup/*.png ; do
+    sudo cp -v ${file} /usr/share/icons/mozc/
+  done
+
+  __fcitx5_restart
+}
+
+__fcitx5_restart() {
+  fcitx5-remote -e
+  sleep 1
+  fcitx5 -d
+}
+
+__clean() {
+  rm -rv build
+  rm -rv backup
+}
+
+case $1 in
+  install) __install ;;
+  remove|uninsintall) __uninstall ;;
+  clean) __clean ;;
+  ?) exit 1 ;;
+esac
+
+exit 0
+
